@@ -28,6 +28,12 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a href="{{ route('paramedic') }}" class="nav-link @if (request()->is('paramedic*')) active @endif">
+                    <i class="nav-icon fas fa-user-md"></i>
+                    <p>Paramedic</p>
+                </a>
+            </li>
+            <li class="nav-item">
                 <a href="{{ route('logout') }}" class="nav-link">
                     <i class="nav-icon fas fa-sign-out-alt"></i>
                     <p>Sign Out</p>
