@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire;
 
+use Illuminate\Support\Facades\Hash;
 use Livewire\WithPagination;
 use Livewire\Component;
 use App\Models\User;
@@ -11,14 +12,12 @@ class UserComponent extends Component
     use WithPagination;
 
     public $idUser;
-    	public $username;
-	public $email;
-	public $email_verified_at;
-	public $password;
-	public $remember_token;
-	public $paramedic_id;
-	public $fullname;
-	
+    public $username;
+    public $password;
+    public $password_confirmation;
+    public $paramedic_id;
+    public $fullname;
+
     public $isEdit = false;
     public $search;
 
@@ -26,41 +25,35 @@ class UserComponent extends Component
 
     public function rules()
     {
-        return [
-			'username' => 'required',
-			'email' => 'required',
-			'email_verified_at' => 'required',
-			'password' => 'required',
-			'remember_token' => 'required',
-			'paramedic_id' => 'required',
-			'fullname' => 'required',
-			];
+        $rules['username'] = $this->isEdit ? 'required|unique:users,username,' . $this->idUser : 'required|unique:users,username';
+        if ($this->isEdit == false) {
+            $rules['password'] = 'required|min:6|confirmed';
+            $rules['password_confirmation'] = 'required';
+        }
+        $rules['fullname'] = 'required';
+        return $rules;
     }
 
     private function data()
     {
-        return [
-			'username' => $this->username,
-			'email' => $this->email,
-			'email_verified_at' => $this->email_verified_at,
-			'password' => $this->password,
-			'remember_token' => $this->remember_token,
-			'paramedic_id' => $this->paramedic_id,
-			'fullname' => $this->fullname,
-			];
+        $data["username"] = $this->username;
+        if ($this->isEdit == false) {
+            $data["password"] = Hash::make($this->password);
+        }
+        $data["paramedic_id"] = $this->paramedic_id;
+        $data["fullname"] = $this->fullname;
+        return $data;
     }
 
     public function create()
     {
-        		$this->idUser = '';
-		$this->username = '';
-		$this->email = '';
-		$this->email_verified_at = '';
-		$this->password = '';
-		$this->remember_token = '';
-		$this->paramedic_id = '';
-		$this->fullname = '';
-		
+        $this->idUser = '';
+        $this->username = '';
+        $this->password = '';
+        $this->password_confirmation = '';
+        $this->paramedic_id = '';
+        $this->fullname = '';
+
         $this->isEdit = false;
         $this->resetValidation();
     }
@@ -69,14 +62,12 @@ class UserComponent extends Component
     {
         $data = User::find($id);
         $this->idUser = $id;
-        		$this->username = $data->username;
-		$this->email = $data->email;
-		$this->email_verified_at = $data->email_verified_at;
-		$this->password = $data->password;
-		$this->remember_token = $data->remember_token;
-		$this->paramedic_id = $data->paramedic_id;
-		$this->fullname = $data->fullname;
-		
+        $this->username = $data->username;
+        $this->password = '';
+        $this->password_confirmation = '';
+        $this->paramedic_id = $data->paramedic_id;
+        $this->fullname = $data->fullname;
+
         $this->isEdit = true;
         $this->resetValidation();
     }
@@ -110,13 +101,8 @@ class UserComponent extends Component
     {
         if ($this->search) {
             return User::where('username', 'like', '%' . $this->search . '%')
-				->orWhere('email', 'like', '%' . $this->search . '%')
-				->orWhere('email_verified_at', 'like', '%' . $this->search . '%')
-				->orWhere('password', 'like', '%' . $this->search . '%')
-				->orWhere('remember_token', 'like', '%' . $this->search . '%')
-				->orWhere('paramedic_id', 'like', '%' . $this->search . '%')
-				->orWhere('fullname', 'like', '%' . $this->search . '%')
-
+                ->orWhere('paramedic_id', 'like', '%' . $this->search . '%')
+                ->orWhere('fullname', 'like', '%' . $this->search . '%')
                 ->orderBy('id', 'desc')
                 ->paginate(5);
         } else {

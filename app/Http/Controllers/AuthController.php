@@ -19,12 +19,20 @@ class AuthController extends Controller
             'password' => 'required'
         ]);
         if (Auth::attempt(['username' => $request->username, 'password' => $request->password])) {
+            $request->session()->regenerate();
             return redirect('dashboard');
-        } else {
-            return redirect()->to('/')->with([
-                'type' => 'error',
-                'message' => 'Account not found'
-            ]);
         }
+        return back()->with([
+            'type' => 'error',
+            'message' => 'Account not found'
+        ]);
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect('/');
     }
 }
