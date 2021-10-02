@@ -1,0 +1,89 @@
+<?php
+
+namespace App\Http\Livewire;
+
+use Livewire\WithPagination;
+use Livewire\Component;
+use App\Models\{{modelName}};
+
+class {{modelName}}Component extends Component
+{
+    use WithPagination;
+
+    public $id{{modelName}};
+    {{property}}
+    public $isEdit = false;
+    public $search;
+
+    protected $paginationTheme = "bootstrap";
+
+    public function rules()
+    {
+        return {{rules}};
+    }
+
+    private function data()
+    {
+        return {{data}};
+    }
+
+    public function create()
+    {
+        {{propertyCreate}}
+        $this->isEdit = false;
+        $this->resetValidation();
+    }
+
+    public function edit($id)
+    {
+        $data = {{modelName}}::find($id);
+        $this->id{{modelName}} = $id;
+        {{propertyEdit}}
+        $this->isEdit = true;
+        $this->resetValidation();
+    }
+
+    public function buttonSave()
+    {
+        if ($this->isEdit == false) {
+            $this->store();
+        } else {
+            $this->update();
+        }
+    }
+
+    private function store()
+    {
+        $this->validate();
+        {{modelName}}::create($this->data());
+        $this->emit("btnSave", "Success Create Data!");
+    }
+
+    private function update()
+    {
+        $this->validate();
+        {{modelName}}::find($this->id{{modelName}})->update($this->data());
+        $allData = $this->read();
+        $this->gotoPage($allData->currentPage());
+        $this->emit("btnSave", "Success Update Data!");
+    }
+
+    private function read()
+    {
+        if ($this->search) {
+            return {{modelName}}::{{search}}
+                ->orderBy('id', 'desc')
+                ->paginate(5);
+        } else {
+            return {{modelName}}::orderBy('id', 'desc')
+                ->paginate(5);
+        }
+    }
+
+    public function render()
+    {
+        $data["{{tableName}}"] = $this->read();
+        $data["count_data"] = {{modelName}}::count();
+        return view('livewire.{{singularTableName}}-component', $data)->extends("layout.template");
+    }
+}

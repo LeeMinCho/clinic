@@ -5,4 +5,6 @@
 <!-- Theme style -->
 <link rel="stylesheet" href="{{ url('assets') }}/dist/css/adminlte.min.css">
 
+@livewireStyles
+
 @stack('custom-style')
