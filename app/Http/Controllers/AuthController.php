@@ -19,7 +19,7 @@ class AuthController extends Controller
             'password' => 'required'
         ]);
         if (Auth::attempt(['username' => $request->username, 'password' => $request->password])) {
-            echo 'Yes';
+            return redirect('dashboard');
         } else {
             return redirect()->to('/')->with([
                 'type' => 'error',
