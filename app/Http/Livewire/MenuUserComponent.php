@@ -48,6 +48,7 @@ class MenuUserComponent extends Component
     {
         $this->validate();
         MenuUser::create($this->data());
+        $this->emit('showPrimaryModalUser', $this->dataUser());
         $this->user_id = '';
         $this->emit('user_id', $this->user_id);
         $this->emit("btnSave", "Success Create Data!");
@@ -56,6 +57,7 @@ class MenuUserComponent extends Component
     public function delete($id)
     {
         MenuUser::destroy($id);
+        $this->emit('showPrimaryModalUser', $this->dataUser());
         $this->emit("btnSave", "Success Delete Data!");
     }
 

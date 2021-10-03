@@ -26,7 +26,8 @@ Screen
                 <div class="card-body">
                     <div class="row justify-content-between">
                         <div class="col-md-2">
-                            <button type="button" class="btn btn-primary" data-toggle="modal"
+                            <button type="button" class="btn btn-primary" @if (auth()->user()->is_admin == 0) disabled
+                                @endif data-toggle="modal"
                                 data-target="#modal-screen" data-backdrop="static" wire:click="create()">
                                 <i class="fas fa-plus-circle"></i> Add
                             </button>
@@ -55,7 +56,8 @@ Screen
                                     <td>{{ $screen->screen }}</td>
                                     <td>{{ $screen->url }}</td>
                                     <td>
-                                        <button type="button" class="btn btn-warning" data-toggle="modal"
+                                        <button type="button" class="btn btn-warning" @if (auth()->user()->is_admin ==
+                                            0) disabled @endif data-toggle="modal"
                                             data-target="#modal-screen" data-backdrop="static"
                                             wire:click="edit({{ $screen->id }})">
                                             <i class="fas fa-edit"></i> Edit

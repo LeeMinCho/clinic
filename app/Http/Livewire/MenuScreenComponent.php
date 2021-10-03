@@ -48,12 +48,16 @@ class MenuScreenComponent extends Component
     {
         $this->validate();
         MenuScreen::create($this->data());
+        $this->emit('showPrimaryModalScreen', $this->dataScreen());
+        $this->screen_id = '';
+        $this->emit('screen_id', $this->screen_id);
         $this->emit("btnSave", "Success Create Data!");
     }
 
     public function delete($id)
     {
         MenuScreen::destroy($id);
+        $this->emit('showPrimaryModalScreen', $this->dataScreen());
         $this->emit("btnSave", "Success Delete Data!");
     }
 
