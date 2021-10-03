@@ -3,6 +3,7 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Livewire\ParamedicComponent;
 use App\Http\Controllers\AuthController;
+use App\Http\Livewire\PatientComponent;
 use Illuminate\Support\Facades\Route;
 use App\Http\Livewire\UserComponent;
 
@@ -24,4 +25,5 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/user', UserComponent::class)->name('user');
     Route::get('/paramedic', ParamedicComponent::class)->name('paramedic');
+    Route::get('/patient', PatientComponent::class)->name('patient');
 });

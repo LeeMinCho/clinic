@@ -28,7 +28,7 @@
                 <div class="col-md-6">
                     <div class="row">
                         <div class="col-md-6">
-                            <a href="#" class="info-box">
+                            <a href="{{ route('patient') }}" class="info-box">
                                 <span class="info-box-icon">
                                     <i class="fas fa-book-medical"></i>
                                 </span>

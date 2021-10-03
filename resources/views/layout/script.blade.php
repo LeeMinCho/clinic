@@ -6,6 +6,9 @@
 <script src="{{ url('assets') }}/plugins/select2/js/select2.full.min.js"></script>
 <!-- SweetAlert2 -->
 <script src="{{ url('assets') }}/plugins/sweetalert2/sweetalert2.min.js"></script>
+<!-- InputMask -->
+<script src="{{ url('assets') }}/plugins/moment/moment.min.js"></script>
+<script src="{{ url('assets') }}/plugins/inputmask/jquery.inputmask.min.js"></script>
 <!-- AdminLTE App -->
 <script src="{{ url('assets') }}/dist/js/adminlte.min.js"></script>
 <!-- AdminLTE for demo purposes -->
@@ -14,7 +17,7 @@
 @livewireScripts
 
 <script>
-    //Initialize Select2 Elements
+  //Initialize Select2 Elements
     $('.select2bs4').select2({
       theme: 'bootstrap4'
     })
