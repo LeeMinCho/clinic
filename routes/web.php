@@ -3,7 +3,9 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Livewire\ParamedicComponent;
 use App\Http\Controllers\AuthController;
+use App\Http\Livewire\MenuComponent;
 use App\Http\Livewire\PatientComponent;
+use App\Http\Livewire\ScreenComponent;
 use Illuminate\Support\Facades\Route;
 use App\Http\Livewire\UserComponent;
 
@@ -26,4 +28,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/user', UserComponent::class)->name('user');
     Route::get('/paramedic', ParamedicComponent::class)->name('paramedic');
     Route::get('/patient', PatientComponent::class)->name('patient');
+    Route::get('/menu', MenuComponent::class)->name('menu');
+    Route::get('/screen', ScreenComponent::class)->name('screen');
 });

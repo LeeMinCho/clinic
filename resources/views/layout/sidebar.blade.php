@@ -34,6 +34,18 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a href="{{ route('menu') }}" class="nav-link @if (request()->is('menu*')) active @endif">
+                    <i class="nav-icon fas fa-user-cog"></i>
+                    <p>Menu</p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ route('screen') }}" class="nav-link @if (request()->is('screen*')) active @endif">
+                    <i class="nav-icon fas fa-tv"></i>
+                    <p>Screen</p>
+                </a>
+            </li>
+            <li class="nav-item">
                 <a href="{{ route('logout') }}" class="nav-link">
                     <i class="nav-icon fas fa-sign-out-alt"></i>
                     <p>Sign Out</p>
