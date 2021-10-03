@@ -38,6 +38,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
                             <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i
                                     class="fas fa-bars"></i></a>
                         </li>
+                        <li class="nav-item">
+                            <a href="index3.html" class="nav-link">Home</a>
+                        </li>
                     </ul>
                 </div>
             </div>

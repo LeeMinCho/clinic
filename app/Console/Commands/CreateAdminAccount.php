@@ -52,6 +52,7 @@ class CreateAdminAccount extends Command
                     "username" => $username,
                     "password" => Hash::make($password),
                     "fullname" => $fullname,
+                    "is_admin" => 1
                 ]);
                 $this->info("Success create account");
             }
