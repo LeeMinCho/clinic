@@ -18,7 +18,7 @@ class MenuUserComponent extends Component
     public $search;
 
     protected $paginationTheme = "bootstrap";
-    protected $listeners = ['showUsers', 'delete'];
+    protected $listeners = ['showUsers', 'deleteUser' => 'delete'];
 
     public function rules()
     {

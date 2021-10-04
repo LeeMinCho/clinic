@@ -49,7 +49,7 @@
                                     <td>{{ $menu_user->user->fullname }}</td>
                                     <td>
                                         <button type="button" class="btn btn-danger"
-                                            wire:click="$emit('deleteUser', {{ $menu_user->id }})">
+                                            onclick="deleteUser({{ $menu_user->id }})">
                                             <i class="fas fa-trash"></i> Delete
                                         </button>
                                     </td>
@@ -107,7 +107,7 @@
             });
         });
         
-        window.livewire.on('deleteUser', (id) => {
+        function deleteUser(id) {
             Swal.fire({
                 title: 'Are you sure?',
                 text: "You won't be able to revert this!",
@@ -118,10 +118,10 @@
                 confirmButtonText: 'Yes'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    Livewire.emit('delete', id);
+                    Livewire.emit('deleteUser', id);
                 }
             });
-        });
+        }
     </script>
     @endpush
 </div>

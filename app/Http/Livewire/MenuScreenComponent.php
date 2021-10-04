@@ -18,7 +18,7 @@ class MenuScreenComponent extends Component
     public $search;
 
     protected $paginationTheme = "bootstrap";
-    protected $listeners = ['showScreens', 'delete'];
+    protected $listeners = ['showScreens', 'deleteScreen' => 'delete'];
 
     public function rules()
     {

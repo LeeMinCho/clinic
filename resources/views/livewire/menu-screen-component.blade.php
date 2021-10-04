@@ -49,7 +49,7 @@
                                     <td>{{ $menu_screen->screen->screen }}</td>
                                     <td>
                                         <button type="button" class="btn btn-danger"
-                                            wire:click="$emit('deleteScreen', {{ $menu_screen->id }})">
+                                            onclick="deleteScreen({{ $menu_screen->id }})">
                                             <i class="fas fa-trash"></i> Delete
                                         </button>
                                     </td>
@@ -107,7 +107,7 @@
             });
         });
         
-        window.livewire.on('deleteScreen', (id) => {
+        function deleteScreen(id) {
             Swal.fire({
                 title: 'Are you sure?',
                 text: "You won't be able to revert this!",
@@ -118,10 +118,10 @@
                 confirmButtonText: 'Yes'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    Livewire.emit('delete', id);
+                    Livewire.emit('deleteScreen', id);
                 }
             });
-        });
+        }
     </script>
     @endpush
 </div>
