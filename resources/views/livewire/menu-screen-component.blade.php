@@ -9,15 +9,13 @@
                     </button>
                 </div>
                 <div class="modal-body">
+                    <input type="hidden" name="menu_id" id="menu_id" wire:model.lazy="menu_id">
                     <div class="row">
                         <div class="col-md-4">
                             <div class='form-group'>
                                 <div wire:ignore>
                                     <select name="screen_id" id="screen_id" class="form-control select2bs4">
                                         <option value="">- Choose Screen -</option>
-                                        @foreach ($screens as $screne)
-                                        <option value="{{ $screne->id }}">{{ $screne->screne }}</option>
-                                        @endforeach
                                     </select>
                                 </div>
                                 @error('screen_id')
@@ -87,6 +85,29 @@
 
     @push('custom-script')
     <script>
+        var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+        $( "#screen_id" ).select2({
+            ajax: { 
+                url: "{{route('screen.getScreen')}}",
+                type: "post",
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        _token: CSRF_TOKEN,
+                        search: params.term, // search term
+                        menu_id: $("#menu_id").val()
+                    };
+                },
+                processResults: function (response) {
+                    return {
+                        results: response
+                    };
+                },
+                cache: true
+            }
+        });
+
         $("#screen_id").on("change", function () {
             @this.set("screen_id", $(this).val());
         });
@@ -95,11 +116,7 @@
             $("#screen_id").val(screen_id).trigger("change");
         });
         
-        window.livewire.on('showPrimaryModalScreen', (screens) => {
-            $("#screen_id").find("option").not(":first").remove();
-            $.each(screens, function (i, row) {
-                $("#screen_id").append("<option value='" + row["id"] + "'>" + row["screen"] + "</option>");
-            });
+        window.livewire.on('showPrimaryModalScreen', () => {
             $("#modal-menu-screen").modal({
                 backdrop: 'static',
                 keyboard: false,

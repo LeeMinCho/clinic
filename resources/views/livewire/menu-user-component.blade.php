@@ -9,15 +9,13 @@
                     </button>
                 </div>
                 <div class="modal-body">
+                    <input type="hidden" name="menu_id" id="menu_id" wire:model.lazy="menu_id">
                     <div class="row">
                         <div class="col-md-4">
                             <div class='form-group'>
                                 <div wire:ignore>
                                     <select name="user_id" id="user_id" class="form-control select2bs4">
                                         <option value="">- Choose User -</option>
-                                        @foreach ($users as $user)
-                                        <option value="{{ $user->id }}">{{ $user->fullname }}</option>
-                                        @endforeach
                                     </select>
                                 </div>
                                 @error('user_id')
@@ -87,6 +85,29 @@
 
     @push('custom-script')
     <script>
+        var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+        $( "#user_id" ).select2({
+            ajax: { 
+                url: "{{route('user.getUser')}}",
+                type: "post",
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        _token: CSRF_TOKEN,
+                        search: params.term, // search term
+                        menu_id: $("#menu_id").val()
+                    };
+                },
+                processResults: function (response) {
+                    return {
+                        results: response
+                    };
+                },
+                cache: true
+            }
+        });
+
         $("#user_id").on("change", function () {
             @this.set("user_id", $(this).val());
         });
@@ -95,11 +116,7 @@
             $("#user_id").val(user_id).trigger("change");
         });
         
-        window.livewire.on('showPrimaryModalUser', (users) => {
-            $("#user_id").find("option").not(":first").remove();
-            $.each(users, function (i, row) {
-                $("#user_id").append("<option value='" + row["id"] + "'>" + row["fullname"] + "</option>");
-            });
+        window.livewire.on('showPrimaryModalUser', () => {
             $("#modal-menu-user").modal({
                 backdrop: 'static',
                 keyboard: false,

@@ -2,9 +2,10 @@
 
 namespace App\Http\Livewire;
 
-use Livewire\Component;
+use Illuminate\Http\Request;
 use Livewire\WithPagination;
 use App\Models\MenuScreen;
+use Livewire\Component;
 use App\Models\Screen;
 
 class MenuScreenComponent extends Component
@@ -41,14 +42,13 @@ class MenuScreenComponent extends Component
         $this->screen_id = '';
         $this->emit('screen_id', $this->screen_id);
         $this->resetValidation();
-        $this->emit('showPrimaryModalScreen', $this->dataScreen());
+        $this->emit('showPrimaryModalScreen');
     }
 
     public function store()
     {
         $this->validate();
         MenuScreen::create($this->data());
-        $this->emit('showPrimaryModalScreen', $this->dataScreen());
         $this->screen_id = '';
         $this->emit('screen_id', $this->screen_id);
         $this->emit("btnSave", "Success Create Data!");
@@ -57,7 +57,6 @@ class MenuScreenComponent extends Component
     public function delete($id)
     {
         MenuScreen::destroy($id);
-        $this->emit('showPrimaryModalScreen', $this->dataScreen());
         $this->emit("btnSave", "Success Delete Data!");
     }
 
@@ -77,27 +76,44 @@ class MenuScreenComponent extends Component
         }
     }
 
-    private function dataScreen()
-    {
-        if ($this->menu_id) {
-            $screenInMenu = MenuScreen::where('menu_id', $this->menu_id)
-                ->get();
-            $screenId = [];
-            foreach ($screenInMenu as $value) {
-                $screenId[] = $value->screen_id;
-            }
-            return Screen::whereNotIn('id', $screenId)
-                ->get();
-        } else {
-            return [];
-        }
-    }
-
     public function render()
     {
         $data["menu_screens"] = $this->read();
         $data["count_data"] = $this->menu_id ? MenuScreen::where('menu_id', $this->menu_id)->count() : 0;
-        $data['screens'] = $this->dataScreen();
         return view('livewire.menu-screen-component', $data);
+    }
+
+    public function getScreen(Request $request)
+    {
+        $screenId = [];
+        $screenInMenu = MenuScreen::where('menu_id', $request->menu_id)
+            ->get();
+        if ($screenInMenu) {
+            foreach ($screenInMenu as $value) {
+                $screenId[] = $value->screen_id;
+            }
+        }
+
+        $search = $request->search;
+        if ($search == '') {
+            $screens = Screen::whereNotIn('id', $screenId)
+                ->limit(50)
+                ->get();
+        } else {
+            $screens = Screen::whereNotIn('id', $screenId)
+                ->where('screen', 'like', '%' . $search . '%')
+                ->limit(50)
+                ->get();
+        }
+        $response = [];
+        if ($screens) {
+            foreach ($screens as $screen) {
+                $response[] = [
+                    'id' => $screen->id,
+                    'text' => $screen->screen
+                ];
+            }
+        }
+        return response()->json($response);
     }
 }

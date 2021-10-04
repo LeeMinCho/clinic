@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire;
 
+use Illuminate\Http\Request;
 use Livewire\WithPagination;
 use App\Models\MenuUser;
 use Livewire\Component;
@@ -33,7 +34,7 @@ class MenuUserComponent extends Component
         $this->user_id = '';
         $this->emit('user_id', $this->user_id);
         $this->resetValidation();
-        $this->emit('showPrimaryModalUser', $this->dataUser());
+        $this->emit('showPrimaryModalUser');
     }
 
     private function data()
@@ -48,7 +49,6 @@ class MenuUserComponent extends Component
     {
         $this->validate();
         MenuUser::create($this->data());
-        $this->emit('showPrimaryModalUser', $this->dataUser());
         $this->user_id = '';
         $this->emit('user_id', $this->user_id);
         $this->emit("btnSave", "Success Create Data!");
@@ -57,7 +57,6 @@ class MenuUserComponent extends Component
     public function delete($id)
     {
         MenuUser::destroy($id);
-        $this->emit('showPrimaryModalUser', $this->dataUser());
         $this->emit("btnSave", "Success Delete Data!");
     }
 
@@ -77,27 +76,44 @@ class MenuUserComponent extends Component
         }
     }
 
-    private function dataUser()
-    {
-        if ($this->menu_id) {
-            $userInMenu = MenuUser::where('menu_id', $this->menu_id)
-                ->get();
-            $userId = [];
-            foreach ($userInMenu as $value) {
-                $userId[] = $value->user_id;
-            }
-            return User::whereNotIn('id', $userId)
-                ->get();
-        } else {
-            return [];
-        }
-    }
-
     public function render()
     {
         $data["menu_users"] = $this->read();
         $data["count_data"] = $this->menu_id ? MenuUser::where('menu_id', $this->menu_id)->count() : 0;
-        $data['users'] = $this->dataUser();
         return view('livewire.menu-user-component', $data);
+    }
+
+    public function getUser(Request $request)
+    {
+        $userId = [];
+        $userInMenu = MenuUser::where('menu_id', $request->menu_id)
+            ->get();
+        if ($userInMenu) {
+            foreach ($userInMenu as $value) {
+                $userId[] = $value->user_id;
+            }
+        }
+
+        $search = $request->search;
+        if ($search == '') {
+            $users = User::whereNotIn('id', $userId)
+                ->limit(50)
+                ->get();
+        } else {
+            $users = User::whereNotIn('id', $userId)
+                ->where('screen', 'like', '%' . $search . '%')
+                ->limit(50)
+                ->get();
+        }
+        $response = [];
+        if ($users) {
+            foreach ($users as $user) {
+                $response[] = [
+                    'id' => $user->id,
+                    'text' => $user->fullname
+                ];
+            }
+        }
+        return response()->json($response);
     }
 }
