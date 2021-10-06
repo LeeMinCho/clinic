@@ -12,4 +12,9 @@ class Paramedic extends Model
     use SoftDeletes;
 
     protected $fillable = ['first_name', 'last_name', 'paramedic_type', 'registration_number', 'phone_number', 'address', 'identity_type', 'identity_number'];
+
+    public function clinics()
+    {
+        return $this->belongsToMany(Clinic::class, 'clinic_paramedics')->withPivot('id');
+    }
 }

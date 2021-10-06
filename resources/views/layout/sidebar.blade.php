@@ -46,6 +46,12 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a href="{{ route('clinic') }}" class="nav-link @if (request()->is('clinic*')) active @endif">
+                    <i class="nav-icon fas fa-clinic-medical"></i>
+                    <p>Clinic</p>
+                </a>
+            </li>
+            <li class="nav-item">
                 <a href="{{ route('logout') }}" class="nav-link">
                     <i class="nav-icon fas fa-sign-out-alt"></i>
                     <p>Sign Out</p>
