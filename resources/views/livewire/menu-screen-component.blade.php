@@ -3,13 +3,13 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Screen</h4>
+                    <h4 class="modal-title">Screen in {{ $menu_name }}</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <input type="hidden" name="menu_id" id="menu_id" wire:model.lazy="menu_id">
+                    <input type="hidden" name="menu_id_screen" id="menu_id_screen" wire:model.lazy="menu_id">
                     <div class="row">
                         <div class="col-md-4">
                             <div class='form-group'>
@@ -41,13 +41,13 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse ($menu_screens as $menu_screen)
+                                @forelse ($screens as $screen)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $menu_screen->screen->screen }}</td>
+                                    <td>{{ $screen->screen }}</td>
                                     <td>
                                         <button type="button" class="btn btn-danger"
-                                            onclick="deleteScreen({{ $menu_screen->id }})">
+                                            onclick="deleteScreen({{ $screen->id }})">
                                             <i class="fas fa-trash"></i> Delete
                                         </button>
                                     </td>
@@ -63,12 +63,12 @@
                     <div class="row">
                         <div class="col-md-6">
                             <i>Total Record: {{ $count_data }} @if ($search)
-                                Filtered: {{ $menu_screens->total() }}
+                                Filtered: {{ $screens->total() }}
                                 @endif</i>
                         </div>
                         <div class="col-md-6">
                             <div class="float-right">
-                                {!! $menu_screens->links() !!}
+                                {!! $screens->links() !!}
                             </div>
                         </div>
                     </div>
@@ -96,7 +96,7 @@
                     return {
                         _token: CSRF_TOKEN,
                         search: params.term, // search term
-                        menu_id: $("#menu_id").val()
+                        menu_id: $("#menu_id_screen").val()
                     };
                 },
                 processResults: function (response) {

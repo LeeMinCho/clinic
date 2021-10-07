@@ -2,7 +2,6 @@
 
 namespace App\Http\Livewire;
 
-use App\Models\ClinicParamedic;
 use Livewire\WithPagination;
 use Illuminate\Http\Request;
 use App\Models\Paramedic;
@@ -16,6 +15,7 @@ class ClinicParamedicComponent extends Component
     public $idClinicParamedic;
     public $clinic_id;
     public $paramedic_id;
+    public $clinic_name;
     public $search;
 
     protected $paginationTheme = "bootstrap";
@@ -24,6 +24,9 @@ class ClinicParamedicComponent extends Component
     public function showModalParamedic($clinic_id)
     {
         $this->clinic_id = $clinic_id;
+        $clinic = Clinic::find($clinic_id);
+        $this->clinic_name = $clinic->name;
+        $this->resetValidation();
         $this->emit('showModal', $clinic_id);
     }
 
@@ -35,17 +38,17 @@ class ClinicParamedicComponent extends Component
     public function store()
     {
         $this->validate();
-        ClinicParamedic::create([
-            'clinic_id' => $this->clinic_id,
-            'paramedic_id' => $this->paramedic_id
-        ]);
+        $clinic = Clinic::findOrFail($this->clinic_id);
+        $clinic->paramedics()->attach($this->paramedic_id);
         $this->emit('btnSave', 'Success create data!');
-        $this->emit('paramedic_id', '');
+        $this->paramedic_id = '';
+        $this->emit('paramedic_id', $this->paramedic_id);
     }
 
     public function deleteParamedic($id)
     {
-        ClinicParamedic::destroy($id);
+        $clinic = Clinic::findOrFail($this->clinic_id);
+        $clinic->paramedics()->detach($id);
         $this->emit('btnSave', 'Success delete data!');
     }
 
@@ -58,14 +61,14 @@ class ClinicParamedicComponent extends Component
                 })
                 ->where('first_name', 'like', '%' . $this->search . '%')
                 ->orWhere('last_name', 'like', '%' . $this->search . '%')
-                ->orderBy('id', 'desc')
+                ->latest()
                 ->paginate(5);
         } else {
             return Paramedic::with(['clinics'])
                 ->whereHas('clinics', function ($query) {
                     return $query->where('clinics.id', $this->clinic_id);
                 })
-                ->orderBy('id', 'desc')
+                ->latest()
                 ->paginate(5);
         }
     }
@@ -84,13 +87,10 @@ class ClinicParamedicComponent extends Component
     public function getParamedic(Request $request)
     {
         $search = $request->search;
-        $paramedicInClinic = ClinicParamedic::where('clinic_id', $request->clinic_id)
-            ->get();
+        $clinic = Clinic::find($request->clinic_id);
         $paramedicId = [];
-        if ($paramedicInClinic) {
-            foreach ($paramedicInClinic as $value) {
-                $paramedicId[] = $value->paramedic_id;
-            }
+        foreach ($clinic->paramedics as $paramedic) {
+            $paramedicId[] = $paramedic->pivot->paramedic_id;
         }
         if ($search == '') {
             $paramedics = Paramedic::whereNotIn('id', $paramedicId)

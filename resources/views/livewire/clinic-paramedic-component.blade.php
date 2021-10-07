@@ -3,7 +3,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Paramedic</h4>
+                    <h4 class="modal-title">Paramedic in {{ $clinic_name }}</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -59,7 +59,7 @@
                                     </td>
                                     <td>
                                         <button type="button" class="btn btn-danger"
-                                            onclick="deleteParamedic({{ $paramedic->clinics->first()->pivot->id }})">
+                                            onclick="deleteParamedic({{ $paramedic->id }})">
                                             <i class="fas fa-trash"></i> Delete
                                         </button>
                                     </td>

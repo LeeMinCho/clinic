@@ -4,8 +4,8 @@ namespace App\Http\Livewire;
 
 use Illuminate\Http\Request;
 use Livewire\WithPagination;
-use App\Models\MenuUser;
 use Livewire\Component;
+use App\Models\Menu;
 use App\Models\User;
 
 class MenuUserComponent extends Component
@@ -15,6 +15,7 @@ class MenuUserComponent extends Component
     public $idMenuUser;
     public $user_id;
     public $menu_id;
+    public $menu_name;
 
     public $search;
 
@@ -30,6 +31,8 @@ class MenuUserComponent extends Component
 
     public function showUsers($menu_id)
     {
+        $menu = Menu::findOrFail($menu_id);
+        $this->menu_name = $menu->menu;
         $this->menu_id = $menu_id;
         $this->user_id = '';
         $this->emit('user_id', $this->user_id);
@@ -37,18 +40,11 @@ class MenuUserComponent extends Component
         $this->emit('showPrimaryModalUser');
     }
 
-    private function data()
-    {
-        return [
-            'user_id' => $this->user_id,
-            'menu_id' => $this->menu_id,
-        ];
-    }
-
     public function store()
     {
         $this->validate();
-        MenuUser::create($this->data());
+        $menu = Menu::findOrFail($this->menu_id);
+        $menu->users()->attach($this->user_id);
         $this->user_id = '';
         $this->emit('user_id', $this->user_id);
         $this->emit("btnSave", "Success Create Data!");
@@ -56,42 +52,49 @@ class MenuUserComponent extends Component
 
     public function delete($id)
     {
-        MenuUser::destroy($id);
+        $menu = Menu::findOrFail($this->menu_id);
+        $menu->users()->detach($id);
         $this->emit("btnSave", "Success Delete Data!");
     }
 
     private function read()
     {
         if ($this->search) {
-            return MenuUser::where('user_id', 'like', '%' . $this->search . '%')
-                ->orWhere('menu_id', 'like', '%' . $this->search . '%')
-                ->orderBy('id', 'desc')
+            return User::with(['menus'])
+                ->whereHas('menus', function ($query) {
+                    return $query->where('menus.id', $this->menu_id);
+                })
+                ->where('username', 'like', '%' . $this->search . '%')
+                ->orWhere('fullname', 'like', '%' . $this->search . '%')
+                ->latest()
                 ->paginate(5);
         } else {
-            return MenuUser::orderBy('id', 'desc')
-                ->when($this->menu_id, function ($query, $menu_id) {
-                    return $query->where('menu_id', $menu_id);
+            return User::with(['menus'])
+                ->whereHas('menus', function ($query) {
+                    return $query->where('menus.id', $this->menu_id);
                 })
+                ->latest()
                 ->paginate(5);
         }
     }
 
     public function render()
     {
-        $data["menu_users"] = $this->read();
-        $data["count_data"] = $this->menu_id ? MenuUser::where('menu_id', $this->menu_id)->count() : 0;
+        $data["users"] = $this->read();
+        $data["count_data"] = User::with(['menus'])
+            ->whereHas('menus', function ($query) {
+                return $query->where('menus.id', $this->menu_id);
+            })
+            ->count();
         return view('livewire.menu-user-component', $data);
     }
 
     public function getUser(Request $request)
     {
         $userId = [];
-        $userInMenu = MenuUser::where('menu_id', $request->menu_id)
-            ->get();
-        if ($userInMenu) {
-            foreach ($userInMenu as $value) {
-                $userId[] = $value->user_id;
-            }
+        $menu = Menu::findOrFail($request->menu_id);
+        foreach ($menu->users as $user) {
+            $userId[] = $user->pivot->user_id;
         }
 
         $search = $request->search;

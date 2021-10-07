@@ -13,8 +13,8 @@ class Screen extends Model
 
     protected $fillable = ['screen', 'url'];
 
-    public function menuScreen()
+    public function menus()
     {
-        return $this->hasMany(MenuScreen::class);
+        return $this->belongsToMany(Menu::class, 'menu_screens');
     }
 }

@@ -3,7 +3,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">User</h4>
+                    <h4 class="modal-title">User in {{ $menu_name }}</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -41,13 +41,13 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse ($menu_users as $menu_user)
+                                @forelse ($users as $user)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $menu_user->user->fullname }}</td>
+                                    <td>{{ $user->fullname }}</td>
                                     <td>
                                         <button type="button" class="btn btn-danger"
-                                            onclick="deleteUser({{ $menu_user->id }})">
+                                            onclick="deleteUser({{ $user->id }})">
                                             <i class="fas fa-trash"></i> Delete
                                         </button>
                                     </td>
@@ -63,12 +63,12 @@
                     <div class="row">
                         <div class="col-md-6">
                             <i>Total Record: {{ $count_data }} @if ($search)
-                                Filtered: {{ $menu_users->total() }}
+                                Filtered: {{ $users->total() }}
                                 @endif</i>
                         </div>
                         <div class="col-md-6">
                             <div class="float-right">
-                                {!! $menu_users->links() !!}
+                                {!! $users->links() !!}
                             </div>
                         </div>
                     </div>

@@ -12,4 +12,14 @@ class Menu extends Model
     use SoftDeletes;
 
     protected $fillable = ['menu'];
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'menu_users');
+    }
+
+    public function screens()
+    {
+        return $this->belongsToMany(Screen::class, 'menu_screens');
+    }
 }

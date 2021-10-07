@@ -4,9 +4,9 @@ namespace App\Http\Livewire;
 
 use Illuminate\Http\Request;
 use Livewire\WithPagination;
-use App\Models\MenuScreen;
 use Livewire\Component;
 use App\Models\Screen;
+use App\Models\Menu;
 
 class MenuScreenComponent extends Component
 {
@@ -15,6 +15,7 @@ class MenuScreenComponent extends Component
     public $idMenuScreen;
     public $screen_id;
     public $menu_id;
+    public $menu_name;
 
     public $search;
 
@@ -28,16 +29,10 @@ class MenuScreenComponent extends Component
         ];
     }
 
-    private function data()
-    {
-        return [
-            'screen_id' => $this->screen_id,
-            'menu_id' => $this->menu_id,
-        ];
-    }
-
     public function showScreens($menu_id)
     {
+        $menu = Menu::findOrFail($menu_id);
+        $this->menu_name = $menu->menu;
         $this->menu_id = $menu_id;
         $this->screen_id = '';
         $this->emit('screen_id', $this->screen_id);
@@ -48,7 +43,8 @@ class MenuScreenComponent extends Component
     public function store()
     {
         $this->validate();
-        MenuScreen::create($this->data());
+        $menu = Menu::findOrFail($this->menu_id);
+        $menu->screens()->attach($this->screen_id);
         $this->screen_id = '';
         $this->emit('screen_id', $this->screen_id);
         $this->emit("btnSave", "Success Create Data!");
@@ -56,42 +52,48 @@ class MenuScreenComponent extends Component
 
     public function delete($id)
     {
-        MenuScreen::destroy($id);
+        $menu = Menu::findOrFail($this->menu_id);
+        $menu->screens()->detach($id);
         $this->emit("btnSave", "Success Delete Data!");
     }
 
     private function read()
     {
         if ($this->search) {
-            return MenuScreen::where('user_id', 'like', '%' . $this->search . '%')
-                ->orWhere('menu_id', 'like', '%' . $this->search . '%')
-                ->orderBy('id', 'desc')
+            return Screen::with(['menus'])
+                ->whereHas('menus', function ($query) {
+                    return $query->where('menus.id', $this->menu_id);
+                })
+                ->where('screen', $this->search)
+                ->latest()
                 ->paginate(5);
         } else {
-            return MenuScreen::orderBy('id', 'desc')
-                ->when($this->menu_id, function ($query, $menu_id) {
-                    return $query->where('menu_id', $menu_id);
+            return Screen::with(['menus'])
+                ->whereHas('menus', function ($query) {
+                    return $query->where('menus.id', $this->menu_id);
                 })
+                ->latest()
                 ->paginate(5);
         }
     }
 
     public function render()
     {
-        $data["menu_screens"] = $this->read();
-        $data["count_data"] = $this->menu_id ? MenuScreen::where('menu_id', $this->menu_id)->count() : 0;
+        $data["screens"] = $this->read();
+        $data["count_data"] = Screen::with(['menus'])
+            ->whereHas('menus', function ($query) {
+                return $query->where('menus.id', $this->menu_id);
+            })
+            ->count();
         return view('livewire.menu-screen-component', $data);
     }
 
     public function getScreen(Request $request)
     {
         $screenId = [];
-        $screenInMenu = MenuScreen::where('menu_id', $request->menu_id)
-            ->get();
-        if ($screenInMenu) {
-            foreach ($screenInMenu as $value) {
-                $screenId[] = $value->screen_id;
-            }
+        $menu = Menu::findOrFail($request->menu_id);
+        foreach ($menu->screens as $screen) {
+            $screenId[] = $screen->pivot->screen_id;
         }
 
         $search = $request->search;
