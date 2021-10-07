@@ -39,8 +39,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
                             <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i
                                     class="fas fa-bars"></i></a>
                         </li>
+                    </ul>
+                    <ul class="order-1 order-md-3 navbar-nav navbar-no-expand ml-auto">
                         <li class="nav-item">
-                            <a href="{{ route('registration') }}" class="nav-link">Registration</a>
+                            <div class="custom-control custom-switch">
+                                <input type="checkbox" class="custom-control-input" id="btn-dark-mode">
+                                <label class="custom-control-label" for="btn-dark-mode">Dark Mode</label>
+                            </div>
                         </li>
                     </ul>
                 </div>

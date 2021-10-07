@@ -21,6 +21,24 @@
     $('.select2bs4').select2({
       theme: 'bootstrap4'
     });
+
+    if (localStorage.getItem('dark-mode')) {
+      $("#btn-dark-mode").attr("checked", true);
+      $("body").addClass("dark-mode");
+      $(".main-header").addClass("navbar-dark").removeClass("navbar-light navbar-white");
+    }
+
+    $("#btn-dark-mode").on("change", function () {
+      if ($(this).is(":checked")) {
+        localStorage.setItem('dark-mode', 1);
+        $("body").addClass("dark-mode");
+        $(".main-header").addClass("navbar-dark").removeClass("navbar-light navbar-white");
+      } else {
+        localStorage.removeItem('dark-mode');
+        $("body").removeClass("dark-mode");
+        $(".main-header").addClass("navbar-light navbar-white").removeClass("navbar-dark");
+      }
+    });
 </script>
 
 @stack('custom-script')
