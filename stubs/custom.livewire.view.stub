@@ -50,7 +50,7 @@
                             <tbody>
                                 @forelse (${{tableName}} as ${{singularTableName}})
                                 <tr>
-                                    <td>{{ $loop->iteration }}</td>
+                                    <td>{{ (${{tableName}}->currentPage() - 1) * ${{tableName}}->perPage() + $loop->index + 1 }}</td>
                                     {{tbodyTable}}
                                     <td>
                                         <button type="button" class="btn btn-warning" data-toggle="modal"
@@ -112,7 +112,7 @@
     @push('custom-script')
     <script>
         window.livewire.on('btnSave', (message) => {
-            jQuery('#modal-{{modalName}}').modal('hide');
+            $('#modal-{{modalName}}').modal('hide');
             Swal.fire({
                 icon: 'success',
                 title: 'Success',

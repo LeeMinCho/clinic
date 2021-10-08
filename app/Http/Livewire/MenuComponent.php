@@ -5,6 +5,7 @@ namespace App\Http\Livewire;
 use Livewire\WithPagination;
 use Livewire\Component;
 use App\Models\Menu;
+use Illuminate\Http\Request;
 
 class MenuComponent extends Component
 {
@@ -34,10 +35,7 @@ class MenuComponent extends Component
 
     public function create()
     {
-        $this->idMenu = '';
-        $this->menu = '';
-
-        $this->isEdit = false;
+        $this->reset();
         $this->resetValidation();
     }
 

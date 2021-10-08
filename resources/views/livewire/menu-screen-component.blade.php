@@ -43,7 +43,8 @@
                             <tbody>
                                 @forelse ($screens as $screen)
                                 <tr>
-                                    <td>{{ $loop->iteration }}</td>
+                                    <td>{{ ($screens->currentPage() - 1) * $screens->perPage() + $loop->index + 1 }}
+                                    </td>
                                     <td>{{ $screen->screen }}</td>
                                     <td>
                                         <button type="button" class="btn btn-danger"
@@ -88,7 +89,7 @@
         var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
         $( "#screen_id" ).select2({
             ajax: { 
-                url: "{{route('screen.getScreen')}}",
+                url: "{{route('menu-screen.getScreen')}}",
                 type: "post",
                 dataType: 'json',
                 delay: 250,

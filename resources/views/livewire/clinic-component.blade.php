@@ -51,7 +51,8 @@ Clinic
                             <tbody>
                                 @forelse ($clinics as $clinic)
                                 <tr>
-                                    <td>{{ $loop->iteration }}</td>
+                                    <td>{{ ($clinics->currentPage() - 1) * $clinics->perPage() + $loop->index + 1 }}
+                                    </td>
                                     <td>{{ $clinic->name }}</td>
                                     <td>
                                         <button type="button" class="btn btn-warning" data-toggle="modal"

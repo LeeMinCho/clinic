@@ -46,15 +46,33 @@ Screen
                                     <th>No.</th>
                                     <th>Screen</th>
                                     <th>URL</th>
+                                    <th>Icon</th>
+                                    <th>Flag</th>
+                                    <th>Parent</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse ($screens as $screen)
                                 <tr>
-                                    <td>{{ $loop->iteration }}</td>
+                                    <td>{{ ($screens->currentPage() - 1) * $screens->perPage() + $loop->index + 1 }}
+                                    </td>
                                     <td>{{ $screen->screen }}</td>
                                     <td>{{ $screen->url }}</td>
+                                    <td>
+                                        @if ($screen->icon)
+                                        <i class="{{ $screen->icon }}"></i>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if ($screen->is_menu == 1)
+                                        <span class="badge bg-success">Menu</span>
+                                        @endif
+                                        @if ($screen->is_sub_menu == 1)
+                                        <span class="badge bg-success">Sub Menu</span>
+                                        @endif
+                                    </td>
+                                    <td>{{ $screen->parentScreen['screen'] }}</td>
                                     <td>
                                         <button type="button" class="btn btn-warning" @if (auth()->user()->is_admin ==
                                             0) disabled @endif data-toggle="modal"
@@ -121,7 +139,44 @@ Screen
                         </div>
                         @enderror
                     </div>
-
+                    <div class='form-group'>
+                        <label for='icon'>Icon</label>
+                        <input type='text' id='icon' name='icon'
+                            class='form-control @if($errors->has("icon")) is-invalid @endif' placeholder='Icon'
+                            wire:model.lazy='icon'>
+                        @error('icon')
+                        <div class='invalid-feedback'>
+                            {{ $message }}
+                        </div>
+                        @enderror
+                    </div>
+                    <div class='form-group'>
+                        <label for='screen_id_parent'>Parent</label>
+                        <div wire:ignore>
+                            <select name="screen_id_parent" id="screen_id_parent" class="form-control select2bs4">
+                                <option value="">- Choose Screen -</option>
+                            </select>
+                        </div>
+                        @error('screen_id')
+                        <div class='text-danger small'>
+                            {{ $message }}
+                        </div>
+                        @enderror
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="1" wire:model.lazy="is_menu">
+                                <label class="form-check-label">Menu</label>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="1" wire:model.lazy="is_sub_menu">
+                                <label class="form-check-label">Sub Menu</label>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -138,6 +193,41 @@ Screen
 
     @push('custom-script')
     <script>
+        var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+        $("#screen_id_parent").select2({
+            ajax: { 
+                url: "{{route('screen.getScreen')}}",
+                type: "post",
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        _token: CSRF_TOKEN,
+                        search: params.term, // search term
+                    };
+                },
+                processResults: function (response) {
+                    return {
+                        results: response
+                    };
+                },
+                cache: true
+            }
+        });
+
+        $("#screen_id_parent").on("change", function () {
+            @this.set("screen_id", $(this).val());
+        });
+
+        window.livewire.on('screen_id', (screen) => {
+            if (screen.id) {    
+                var newOption = new Option(screen.screen, screen.id, true, true);
+                $("#screen_id_parent").append(newOption).trigger("change");
+            } else {
+                $("#screen_id_parent").val(null).trigger("change");
+            }
+        });
+
         window.livewire.on('btnSave', (message) => {
             jQuery('#modal-screen').modal('hide');
             Swal.fire({

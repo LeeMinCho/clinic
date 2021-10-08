@@ -58,7 +58,8 @@ Paramedic
                             <tbody>
                                 @forelse ($paramedics as $paramedic)
                                 <tr>
-                                    <td>{{ $loop->iteration }}</td>
+                                    <td>{{ ($paramedics->currentPage() - 1) * $paramedics->perPage() + $loop->index + 1 }}
+                                    </td>
                                     <td>{{ $paramedic->first_name }}</td>
                                     <td>{{ $paramedic->last_name }}</td>
                                     <td>

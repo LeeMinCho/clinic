@@ -37,10 +37,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/screen', ScreenComponent::class)->name('screen');
     Route::get('/registration', RegistrationComponent::class)->name('registration');
     Route::get('/clinic', ClinicComponent::class)->name('clinic');
-});
 
-Route::post('/screen/getScreen', [MenuScreenComponent::class, 'getScreen'])->name('screen.getScreen');
-Route::post('/user/getUser', [MenuUserComponent::class, 'getUser'])->name('user.getUser');
-Route::post('/patient/getPatient', [RegistrationComponent::class, 'getPatient'])->name('patient.getPatient');
-Route::post('/paramedic/getParamedic', [RegistrationComponent::class, 'getParamedic'])->name('paramedic.getParamedic');
-Route::post('/clinic-paramedic/getParamedic', [ClinicParamedicComponent::class, 'getParamedic'])->name('clinic-paramedic.getParamedic');
+    // Select2
+    Route::post('/menu-screen/getScreen', [MenuScreenComponent::class, 'getScreen'])->name('menu-screen.getScreen');
+    Route::post('/user/getUser', [MenuUserComponent::class, 'getUser'])->name('user.getUser');
+    Route::post('/patient/getPatient', [RegistrationComponent::class, 'getPatient'])->name('patient.getPatient');
+    Route::post('/paramedic/getParamedic', [RegistrationComponent::class, 'getParamedic'])->name('paramedic.getParamedic');
+    Route::post('/clinic-paramedic/getParamedic', [ClinicParamedicComponent::class, 'getParamedic'])->name('clinic-paramedic.getParamedic');
+    Route::post('/screen/getScreen', [ScreenComponent::class, 'getScreen'])->name('screen.getScreen');
+});

@@ -51,7 +51,7 @@ Menu
                             <tbody>
                                 @forelse ($menus as $menu)
                                 <tr>
-                                    <td>{{ $loop->iteration }}</td>
+                                    <td>{{ ($menus->currentPage() - 1) * $menus->perPage() + $loop->index + 1 }}</td>
                                     <td>{{ $menu->menu }}</td>
                                     <td>
                                         <div class="btn-group">
@@ -122,7 +122,6 @@ Menu
                         </div>
                         @enderror
                     </div>
-
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

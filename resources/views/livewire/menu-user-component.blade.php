@@ -43,7 +43,7 @@
                             <tbody>
                                 @forelse ($users as $user)
                                 <tr>
-                                    <td>{{ $loop->iteration }}</td>
+                                    <td>{{ ($users->currentPage() - 1) * $users->perPage() + $loop->index + 1 }}</td>
                                     <td>{{ $user->fullname }}</td>
                                     <td>
                                         <button type="button" class="btn btn-danger"
