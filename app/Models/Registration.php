@@ -11,7 +11,7 @@ class Registration extends Model
     use HasFactory;
     use SoftDeletes;
 
-    protected $fillable = ['patient_id', 'paramedic_id', 'user_id_created', 'user_id_updated', 'queue_number',  'queue_status', 'registration_number', 'registration_status'];
+    protected $fillable = ['patient_id', 'paramedic_id', 'user_id_created', 'user_id_updated', 'queue_number',  'queue_status', 'registration_number', 'registration_status', 'registration_date', 'registration_hour', 'clinic_id'];
 
     public function patient()
     {

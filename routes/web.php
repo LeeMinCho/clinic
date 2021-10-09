@@ -41,8 +41,9 @@ Route::middleware(['auth'])->group(function () {
     // Select2
     Route::post('/menu-screen/getScreen', [MenuScreenComponent::class, 'getScreen'])->name('menu-screen.getScreen');
     Route::post('/user/getUser', [MenuUserComponent::class, 'getUser'])->name('user.getUser');
-    Route::post('/patient/getPatient', [RegistrationComponent::class, 'getPatient'])->name('patient.getPatient');
-    Route::post('/paramedic/getParamedic', [RegistrationComponent::class, 'getParamedic'])->name('paramedic.getParamedic');
     Route::post('/clinic-paramedic/getParamedic', [ClinicParamedicComponent::class, 'getParamedic'])->name('clinic-paramedic.getParamedic');
     Route::post('/screen/getScreen', [ScreenComponent::class, 'getScreen'])->name('screen.getScreen');
+    Route::post('/registration/getPatient', [RegistrationComponent::class, 'getPatient'])->name('registration.getPatient');
+    Route::post('/registration/getParamedic', [RegistrationComponent::class, 'getParamedic'])->name('registration.getParamedic');
+    Route::post('/registration/getClinic', [RegistrationComponent::class, 'getClinic'])->name('registration.getClinic');
 });

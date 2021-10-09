@@ -56,16 +56,14 @@ Registration
                             <tbody>
                                 @forelse ($registrations as $registration)
                                 <tr>
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $registration->patient_id }}</td>
-                                    <td>{{ $registration->paramedic_id }}</td>
-                                    <td>{{ $registration->user_id_created }}</td>
-                                    <td>{{ $registration->user_id_updated }}</td>
+                                    <td>{{ ($registrations->currentPage() - 1) * $registrations->perPage() + $loop->index + 1 }}
+                                    </td>
+                                    <td>{{ $registration->patient->full_name }}</td>
                                     <td>{{ $registration->queue_number }}</td>
                                     <td>{{ $registration->queue_status }}</td>
                                     <td>{{ $registration->registration_number }}</td>
                                     <td>{{ $registration->registration_status }}</td>
-
+                                    <td>{{ $registration->paramedic->last_name }}</td>
                                     <td>
                                         <button type="button" class="btn btn-warning" data-toggle="modal"
                                             data-target="#modal-registration" data-backdrop="static"
@@ -109,6 +107,7 @@ Registration
                     </button>
                 </div>
                 <div class="modal-body">
+                    <input type="hidden" name="clinic_id_selected" id="clinic_id_selected" wire:model="clinic_id">
                     <div class='form-group'>
                         <label for='registration_number'>Registration Number</label>
                         <input type='text' id='registration_number' name='registration_number'
@@ -162,6 +161,19 @@ Registration
                         @enderror
                     </div>
                     <div class='form-group'>
+                        <label for='clinic_id'>Clinic</label>
+                        <div wire:ignore>
+                            <select name="clinic_id" id="clinic_id" class="form-control select2bs4">
+                                <option value="">- Choose Clinic -</option>
+                            </select>
+                        </div>
+                        @error('clinic_id')
+                        <div class='text-danger small'>
+                            {{ $message }}
+                        </div>
+                        @enderror
+                    </div>
+                    <div class='form-group'>
                         <label for='paramedic_id'>Paramedic</label>
                         <div wire:ignore>
                             <select name="paramedic_id" id="paramedic_id" class="form-control select2bs4">
@@ -191,9 +203,34 @@ Registration
     @push('custom-script')
     <script>
         var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
-        $( "#patient_id" ).select2({
+        $("#patient_id").select2({
             ajax: { 
-                url: "{{route('patient.getPatient')}}",
+                url: "{{route('registration.getPatient')}}",
+                type: "post",
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        _token: CSRF_TOKEN,
+                        search: params.term, // search term,
+                    };
+                },
+                processResults: function (response) {
+                    return {
+                        results: response
+                    };
+                },
+                cache: true
+            }
+        });
+
+        $("#patient_id").on("change", function () {
+            @this.set("patient_id", $(this).val());
+        });
+
+        $("#clinic_id").select2({
+            ajax: { 
+                url: "{{route('registration.getClinic')}}",
                 type: "post",
                 dataType: 'json',
                 delay: 250,
@@ -212,8 +249,8 @@ Registration
             }
         });
 
-        $("#patient_id").on("change", function () {
-            @this.set("patient_id", $(this).val());
+        $("#clinic_id").on("change", function () {
+            @this.set("clinic_id", $(this).val());
         });
         
         //Datemask dd/mm/yyyy
@@ -230,7 +267,7 @@ Registration
 
         $( "#paramedic_id" ).select2({
             ajax: { 
-                url: "{{route('paramedic.getParamedic')}}",
+                url: "{{route('registration.getParamedic')}}",
                 type: "post",
                 dataType: 'json',
                 delay: 250,
@@ -238,6 +275,7 @@ Registration
                     return {
                         _token: CSRF_TOKEN,
                         search: params.term, // search term
+                        clinic_id: $("#clinic_id_selected").val()
                     };
                 },
                 processResults: function (response) {
