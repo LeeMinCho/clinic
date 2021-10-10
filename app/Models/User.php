@@ -47,4 +47,14 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Menu::class, 'menu_users');
     }
+
+    public function userCreateRegistration()
+    {
+        return $this->hasMany(Registration::class, 'user_id_created');
+    }
+
+    public function userUpdateRegistration()
+    {
+        return $this->hasMany(Registration::class, 'user_id_updated');
+    }
 }

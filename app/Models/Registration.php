@@ -22,4 +22,19 @@ class Registration extends Model
     {
         return $this->belongsTo(Paramedic::class);
     }
+
+    public function clinic()
+    {
+        return $this->belongsTo(Clinic::class);
+    }
+
+    public function userCreated()
+    {
+        return $this->belongsTo(User::class, 'user_id_created', 'id');
+    }
+
+    public function userUpdated()
+    {
+        return $this->belongsTo(User::class, 'user_id_updated', 'id');
+    }
 }

@@ -50,6 +50,10 @@ class SidebarComposer
                     if (in_array(request()->path(), $url)) {
                         $menuOpen = true;
                     }
+                } else {
+                    if (request()->path() == $ps->url) {
+                        $menuOpen = true;
+                    }
                 }
 
                 $sidebarHtml .= '<li class="nav-item ' . ($menuOpen ? 'menu-open' : '') . '">
