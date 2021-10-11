@@ -165,15 +165,31 @@ Screen
                     </div>
                     <div class="row">
                         <div class="col-md-3">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="1" wire:model.lazy="is_menu">
-                                <label class="form-check-label">Menu</label>
+                            <div class="form-group">
+                                <div class="form-check">
+                                    <input class="form-check-input @if($errors->has('is_menu')) is-invalid @endif"
+                                        type="checkbox" value="1" wire:model.lazy="is_menu">
+                                    <label class="form-check-label">Menu</label>
+                                    @error('is_menu')
+                                    <div class='invalid-feedback'>
+                                        {{ $message }}
+                                    </div>
+                                    @enderror
+                                </div>
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="1" wire:model.lazy="is_sub_menu">
-                                <label class="form-check-label">Sub Menu</label>
+                            <div class="form-group">
+                                <div class="form-check">
+                                    <input class="form-check-input @if($errors->has('is_sub_menu')) is-invalid @endif"
+                                        type="checkbox" value="1" wire:model.lazy="is_sub_menu">
+                                    <label class="form-check-label">Sub Menu</label>
+                                    @error('is_sub_menu')
+                                    <div class='invalid-feedback'>
+                                        {{ $message }}
+                                    </div>
+                                    @enderror
+                                </div>
                             </div>
                         </div>
                     </div>

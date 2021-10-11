@@ -20,6 +20,6 @@ class Menu extends Model
 
     public function screens()
     {
-        return $this->belongsToMany(Screen::class, 'menu_screens');
+        return $this->belongsToMany(Screen::class, 'menu_screens')->withTimestamps()->withPivot('number_order');
     }
 }

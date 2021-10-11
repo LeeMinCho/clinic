@@ -28,6 +28,18 @@ class ScreenComponent extends Component
     {
         return [
             'screen' => $this->isEdit ? 'required|unique:screens,screen,' . $this->idScreen : 'required|unique:screens,screen',
+            'is_menu' => [function ($attribute, $value, $fail) {
+                if ($value == 1 && $this->is_sub_menu == 1) {
+                    $fail('Select one between Menu and Sub Menu');
+                }
+            }],
+            'is_sub_menu' => [
+                function ($attribute, $value, $fail) {
+                    if ($value == 1 && $this->is_menu == 1) {
+                        $fail('Select one between Menu and Sub Menu');
+                    }
+                }
+            ]
         ];
     }
 

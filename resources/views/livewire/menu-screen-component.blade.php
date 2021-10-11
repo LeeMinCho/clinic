@@ -25,6 +25,17 @@
                                 @enderror
                             </div>
                         </div>
+                        <div class="col-md-4">
+                            <div class='form-group'>
+                                <input type="text" class="form-control" name="number_order" id="number_order"
+                                    wire:model.lazy="number_order">
+                                @error('number_order')
+                                <div class='invalid-feedback'>
+                                    {{ $message }}
+                                </div>
+                                @enderror
+                            </div>
+                        </div>
                         <div class="col-md-2">
                             <button type="button" class="btn btn-primary" wire:click="store()">
                                 <i class="fas fa-plus"></i> Add
@@ -37,6 +48,8 @@
                                 <tr>
                                     <th>No.</th>
                                     <th>Screen</th>
+                                    <th>Flag</th>
+                                    <th>Order</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -47,6 +60,17 @@
                                     </td>
                                     <td>{{ $screen->screen }}</td>
                                     <td>
+                                        @if ($screen->is_menu == 1)
+                                        <span class="badge bg-success">Menu</span>
+                                        @endif
+                                        @if ($screen->is_sub_menu == 1)
+                                        <span class="badge bg-success">Sub Menu</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        {{ $screen->menus->first()->pivot->number_order }}
+                                    </td>
+                                    <td>
                                         <button type="button" class="btn btn-danger"
                                             onclick="deleteScreen({{ $screen->id }})">
                                             <i class="fas fa-trash"></i> Delete
@@ -55,7 +79,7 @@
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="3">No Data</td>
+                                    <td colspan="5">No Data</td>
                                 </tr>
                                 @endforelse
                             </tbody>

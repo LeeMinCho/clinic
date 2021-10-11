@@ -7,6 +7,7 @@ use Livewire\WithPagination;
 use Livewire\Component;
 use App\Models\Screen;
 use App\Models\Menu;
+use Illuminate\Validation\Rule;
 
 class MenuScreenComponent extends Component
 {
@@ -16,6 +17,7 @@ class MenuScreenComponent extends Component
     public $screen_id;
     public $menu_id;
     public $menu_name;
+    public $number_order;
 
     public $search;
 
@@ -26,6 +28,12 @@ class MenuScreenComponent extends Component
     {
         return [
             'screen_id' => 'required',
+            'number_order' => Rule::requiredIf(function () {
+                $screen = Screen::find($this->screen_id);
+                if ($screen) {
+                    return $screen->is_menu == 1 ? true : false;
+                }
+            })
         ];
     }
 
@@ -35,6 +43,19 @@ class MenuScreenComponent extends Component
         $this->menu_name = $menu->menu;
         $this->menu_id = $menu_id;
         $this->screen_id = '';
+        $screen = Screen::with(['menus' => function ($query) {
+            return $query->max('number_order');
+        }])
+            ->whereHas('menus', function ($query) use ($menu_id) {
+                return $query->where('menus.id', $menu_id);
+            })
+            ->first();
+        if ($screen) {
+            $number_order = $screen->menus->first()->pivot->number_order;
+            $this->number_order = $number_order ? $number_order + 1 : 1;
+        } else {
+            $this->number_order = 1;
+        }
         $this->emit('screen_id', $this->screen_id);
         $this->resetValidation();
         $this->emit('showPrimaryModalScreen');
@@ -44,7 +65,8 @@ class MenuScreenComponent extends Component
     {
         $this->validate();
         $menu = Menu::findOrFail($this->menu_id);
-        $menu->screens()->attach($this->screen_id);
+        $screen = Screen::findOrFail($this->screen_id);
+        $menu->screens()->attach($this->screen_id, ['number_order' => $screen->is_menu == 1 ? $this->number_order : null]);
         $this->screen_id = '';
         $this->emit('screen_id', $this->screen_id);
         $this->emit("btnSave", "Success Create Data!");

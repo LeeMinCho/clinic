@@ -15,7 +15,7 @@ class Screen extends Model
 
     public function menus()
     {
-        return $this->belongsToMany(Menu::class, 'menu_screens');
+        return $this->belongsToMany(Menu::class, 'menu_screens')->withTimestamps()->withPivot('number_order');
     }
 
     public function parentScreen()
